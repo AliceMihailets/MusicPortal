@@ -1,0 +1,31 @@
+﻿@model MusicPortal.Models.TracksWithUserPlaylistViewModel
+@foreach (var item in Model.треки)
+{
+    <div class="row d-flex align-items-center" id="@item.ID" style="margin-bottom:0.4rem">
+        <div class="col-1 d-flex align-items-center">
+            <i style="color:yellowgreen" class="bi bi-play-circle" onclick="getAudioData('@item.ID')"></i>
+        </div>
+        <div class="col-3">
+            <p style="margin-bottom:4px">@item.Название_трека</p>
+        </div>
+        @if (User.IsInRole("admin"))
+        {
+            <div class="col-3 d-flex align-items-center">
+                <button class="btn btn-outline-success" onclick="deletesong(this)" value="@item.ID">Удалить</button>
+            </div>
+        }
+        @if (User.IsInRole("user"))
+        {
+            <div class="col-3 d-flex align-items-center">
+                @if (Model.Треки_В_Плейлисте.FirstOrDefault(t => t.ID_Трека == item.ID) == null)
+                {
+                    <button class="btn btn-outline-primary w-75" style="font-size:14px" onclick="addsong(this)" value="@item.ID">Добавить к себе</button>
+                }
+                else
+                {
+                    <button class="btn btn-outline-primary w-75" style="font-size:14px" onclick="addsong(this)" value="@item.ID">Удалить музыку</button>
+                }
+            </div>
+        }
+    </div>
+}

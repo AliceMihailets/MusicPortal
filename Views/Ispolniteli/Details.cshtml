@@ -1,0 +1,337 @@
+﻿@model MusicPortal.Models.IspolniteliWithBandsViewModel
+@using System.Security.Cryptography;
+@using System.Text;
+@{
+    ViewData["Title"] = Model.исполнитель.Фамилия + " " + Model.исполнитель.Имя;
+    Int32 GetHash(string str)
+    {
+        var tmpsrc = ASCIIEncoding.ASCII.GetBytes(str);
+        var tmphash = new MD5CryptoServiceProvider().ComputeHash(tmpsrc);
+        Int32 int_hash = BitConverter.ToInt32(tmphash) % 10;
+        return Math.Abs(int_hash) + 1;
+    }
+}
+<div class="row" style="margin-left: 20px">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <img src="~/images/Glushka/(@Model.pic_num).jpg" class="w-100" />
+            </div>
+        </div>
+        <div class="row" style="margin-top:20px;border-bottom:1px solid grey">
+            <div class="col-10">
+                <h4>@Model.исполнитель.Фамилия @Model.исполнитель.Имя</h4>
+            </div>
+            <div class="col-2 d-flex justify-content-around">
+                @if (User.IsInRole("admin"))
+                {
+                    <button onclick="changeName(this)" type="button" class="btn btn-primary" style="margin-bottom:0.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="deleteIspolnitel(this)" value="@Model.исполнитель.ID_исполнителя" type="button" class="btn btn-danger" style="margin-bottom:0.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="saveChanges(this)" type="button" class="btn btn-success d-none" id="saveBtn" value="@Model.исполнитель.ID_исполнителя" style="position:fixed; bottom:1rem;right:1rem">
+                        Применить
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="row" style="margin-top: 1rem">
+            <div class="col-11">
+                <h5>Краткое сведение об исполнителе @Model.исполнитель.Фамилия @Model.исполнитель.Имя</h5>
+            </div>
+            <div class="col-1">
+                @if (User.IsInRole("admin"))
+                {
+                    <button onclick="changeBandInfo(this)" type="button" class="btn btn-primary" style="margin-bottom:0.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path>
+                        </svg>
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="row" style="border-bottom:1px solid grey;margin-top:10px;">
+            <div class="col-5">
+                <p>Коллектив в которм учавствует исполнитель:</p>
+                <p>Занимаемая роль:</p>
+                <p>Дата начала работы в коллективе:</p>
+                <p>Дата окончания pаботы в коллективе</p>
+            </div>
+            <div class="col-6">
+                <p>@Model.коллективы.Название_коллектива</p>
+                <p>@Model.роль.роли_В_Коллективах.Название_роли</p>
+                <p>@Model.роль.Дата_начала_работы_в_коллективе.ToShortDateString()</p>
+                @if (Model.роль.Дата_окончания_работы_в_коллективе != null)
+                {
+                    <p>@Model.роль.Дата_окончания_работы_в_коллективе?.ToShortDateString()</p>
+                }
+                else 
+                {
+                    <p>Пока что ещё учавствует в коллективе</p>
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p>На музыкальном портале Яндекс Музыка вы можете бесплатно слушать песни @Model.исполнитель.Фамилия @Model.исполнитель.Имя.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h6>Альбомы исполнителя @Model.исполнитель.Фамилия @Model.исполнитель.Имя</h6>
+            </div>
+        </div>
+        @if (Model.треки.Count() == 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <p>Альбомов нет.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row" style="border-bottom:1px solid grey; border-top:1px solid grey; padding-top:10px; padding-bottom:10px">
+                @for (int i = 0; i < Model.альбомы.Count(); i++)
+                {
+                    <div class="col-2 d-flex flex-column align-items-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <img style="min-height:128.32px" src="~/images/Glushka/(@GetHash(Model.альбомы[i].Название_альбома)).jpg" class="w-100" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <p>
+                                    <a asp-controller="Albums" asp-action="Details" asp-route-id="@Model.альбомы[i].ID">
+                                        @Model.альбомы[i].Название_альбома
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    if (i == 6)
+                    {
+                        break;
+                    }
+                }
+            </div>
+        }
+        <div class="row" style="margin-top:2rem">
+            <div class="col-12">
+                <h6>Треки исполнителя @Model.исполнитель.Фамилия @Model.исполнитель.Имя</h6>
+            </div>
+        </div>
+        @if (Model.треки.Count() == 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <p>Треков у коллектива нет.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model.треки)
+            {
+                <div class="row" id="@item.ID">
+                    <div class="col-1 d-flex align-items-center">
+                        <i style="color:green" class="bi bi-play-circle" onclick="getAudioData('@item.ID')"></i>
+                    </div>
+                    <div class="col-5">
+                        <p style="margin-bottom:4px">@item.Название_трека</p>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        let data = {
+            firstname: "",
+            secondname: "",
+            band: "",
+            role: "",
+            close: "",
+            start: "",
+        };
+        function deleteIspolnitel(element)
+        {
+            let btn = element;
+            let request = new XMLHttpRequest();
+            let body = "id=" + element.value;
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    btn.onclick = null;
+                    alert("Исполнитель удалён");
+                }
+            }
+            request.open("POST", "/Ispolniteli/DeleteIspolnitel");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+        function changeName(element)
+        {
+            let div = element.parentNode.previousElementSibling;
+            let firstSecondName = String(div.firstElementChild.innerText);
+            let secondName = firstSecondName.split(' ')[0];
+            let firstName = firstSecondName.split(' ')[1];
+            while (div.firstChild)
+            {
+                div.removeChild(div.firstChild);
+            }
+            let formdiv = document.createElement('div');
+            formdiv.setAttribute('class', 'row');
+            let formcol1 = document.createElement('div');
+            formcol1.setAttribute('class', 'col-6');
+            let secondNameInp = document.createElement('input');
+            secondNameInp.setAttribute('type', 'text');
+            secondNameInp.classList.add('form-control');
+            secondNameInp.setAttribute('id', 'secondName');
+            secondNameInp.value = secondName;
+            formcol1.appendChild(secondNameInp);
+            let formcol2 = document.createElement('div');
+            formcol2.setAttribute('class', 'col-6');
+            let firstNameInp = document.createElement('input');
+            firstNameInp.setAttribute('type', 'text');
+            firstNameInp.classList.add('form-control');
+            firstNameInp.setAttribute('id', 'firstName');
+            firstNameInp.value = firstName;
+            formcol2.appendChild(firstNameInp);
+            formdiv.appendChild(formcol1);
+            formdiv.appendChild(formcol2);
+            div.appendChild(formdiv);
+            document.getElementById("saveBtn").classList.toggle("d-none");
+        }
+        function changeBandInfo(element)
+        {
+            let div = element.parentNode.parentNode.nextElementSibling.lastElementChild;
+            let bandName = div.firstElementChild.innerText;
+            let role = div.firstElementChild.nextElementSibling.innerText;
+            div.removeChild(div.firstElementChild);
+            div.removeChild(div.firstElementChild);
+            div.removeChild(div.firstElementChild);
+            div.removeChild(div.firstElementChild);
+            let bandInput = document.createElement('select');
+            let roleInput = document.createElement('select');
+            let startDate = document.createElement('input');
+            let closeDate = document.createElement('input');
+            startDate.setAttribute('type', 'date');
+            closeDate.setAttribute('type', 'date');
+            bandInput.setAttribute('class', 'js-chosen form-group');
+            roleInput.setAttribute('class', 'js-chosen form-group');
+            bandInput.setAttribute('id', 'bandInp');
+            roleInput.setAttribute('id', 'roleInp');
+            startDate.setAttribute('id', 'startDate');
+            startDate.setAttribute('class', 'form-group');
+            closeDate.setAttribute('id', 'closeDate');
+            closeDate.setAttribute('class', 'form-group');
+            startDate.style.marginBottom = 0;
+            closeDate.style.marginBottom = 0;
+            let request = new XMLHttpRequest();
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = JSON.parse(request.responseText);
+                    for (let i = 0; i < response.bands.length; i++)
+                    {
+                        bandInput.options[i] = new Option(response.bands[i], response.bands[i]);
+                    }
+                    for (let i = 0; i < response.roles.length; i++)
+                    {
+                        roleInput.options[i] = new Option(response.roles[i], response.roles[i]);
+                    }
+                    let p1 = document.createElement('p');
+                    let p2 = document.createElement('p');
+                    let p3 = document.createElement('p');
+                    let p4 = document.createElement('p');
+                    p1.style.marginBottom = 10 + "px";
+                    p2.style.marginBottom = 12 + "px";
+                    p3.style.marginBottom = 12 + "px";
+                    p4.style.marginBottom = 8 + "px";
+                    p1.appendChild(roleInput);
+                    p2.appendChild(bandInput);
+                    p3.appendChild(startDate);
+                    p4.appendChild(closeDate);
+                    div.appendChild(p4);
+                    div.insertBefore(p3, p4);
+                    div.insertBefore(p1, div.firstElementChild);
+                    div.insertBefore(p2, div.firstElementChild);
+                    $('.js-chosen').chosen({
+                        width: '100%',
+                        no_results_text: 'Совпадений не найдено',
+                        placeholder_text_single: 'Выберите город'
+                    });
+                    document.getElementById('saveBtn').classList.toggle('d-none');
+                }
+            }
+            request.open("POST", "/Ispolniteli/GetBandsAndRoles");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send();
+        }
+        function saveChanges(element)
+        {
+            let request = new XMLHttpRequest();
+            if (document.getElementById('secondName'))
+                data.secondname = document.getElementById('secondName').value;
+            if (document.getElementById('firstName'))
+                data.firstname = document.getElementById('firstName').value;
+            if (document.getElementById('bandInp'))
+                data.band = document.getElementById('bandInp').value;
+            if (document.getElementById('roleInp'))
+                data.role = document.getElementById('roleInp').value;
+            if (document.getElementById('startDate'))
+                data.start = document.getElementById('startDate').value;
+            if (document.getElementById('closeDate'))
+                data.close = document.getElementById('closeDate').value;
+            let body = "id=" + element.value + "&firstName=" + data.firstname + "&secondName=" + data.secondname + "&role=" + data.role + "&band=" + data.band
+                + "&start=" + data.start + "&close" + data.close;
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = JSON.parse(request.responseText);
+                    if (document.getElementById('secondName'))
+                    {
+                        let div11 = document.getElementById('secondName').parentElement.parentElement.parentElement;
+                        while (div11.firstChild)
+                        {
+                            div11.removeChild(div11.firstChild);
+                        }
+                        let h4 = document.createElement("h4");
+                        h4.innerText = response.фамилия + " " + response.имя;
+                        div11.appendChild(h4);
+                    }
+                    if (document.getElementById('bandInp'))
+                    {
+                        let bandInp = document.getElementById('bandInp');
+                        let roleInp = document.getElementById('roleInp');
+                        let startDate = document.getElementById('startDate');
+                        let closeDate = document.getElementById('closeDate');
+                        bandInp.parentNode.style.marginBottom = 16 + "px";
+                        roleInp.parentNode.style.marginBottom = 16 + "px";
+                        startDate.parentNode.style.marginBottom = 16 + "px";
+                        closeDate.parentNode.style.marginBottom = 16 + "px";
+                        bandInp.parentNode.innerHTML = response.band;
+                        roleInp.parentNode.innerHTML = response.role;
+                        startDate.parentNode.innerHTML = response.start;
+                        closeDate.parentNode.innerHTML = response.close;
+                    }
+                    document.getElementById('saveBtn').classList.toggle('d-none');
+                }
+            }
+            request.open("POST", "/Ispolniteli/EditFields");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+    </script>
+}

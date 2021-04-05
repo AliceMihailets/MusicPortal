@@ -1,0 +1,102 @@
+﻿@model MusicPortal.Models.TracksBandsAlbumsViewModel
+@using System.Security.Cryptography;
+@using System.Text;
+@{
+    ViewData["Title"] = "Home Page";
+    Int32 GetHash(string str)
+    {
+        var tmpsrc = ASCIIEncoding.ASCII.GetBytes(str);
+        var tmphash = new MD5CryptoServiceProvider().ComputeHash(tmpsrc);
+        Int32 int_hash = BitConverter.ToInt32(tmphash) % 10;
+        return Math.Abs(int_hash) + 1;
+    }
+}
+
+<div class="row" style="margin-left:2rem">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <h5>Главная cтраница сайта</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p><b>Оцените коллективы</b></p>
+            </div>
+        </div>
+        <div class="row" style="border-bottom:1px solid black">
+            @foreach (var item in Model.коллективы)
+            {
+                <div class="col-2" style="margin-bottom:0.8rem">
+                    <div class="row">
+                        <div class="col-12">
+                            <img src="~/images/Glushka/(@GetHash(item.Название_коллектива)).jpg" class="w-100" style="min-height:123.31px" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <a style="color:black" asp-controller="Bands" asp-action="Details" asp-route-id="@item.ID">@item.Название_коллектива</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row" style="margin-top:1rem;">
+            <div class="col-12">
+                <p><b>Оцените альбомы</b></p>
+            </div>
+        </div>
+        <div class="row" style="border-bottom:1px solid black">
+            @foreach (var item in Model.альбомы)
+            {
+                <div class="col-2" style="margin-bottom:0.8rem">
+                    <div class="row">
+                        <div class="col-12">
+                            <img src="~/images/Glushka/(@GetHash(item.Название_альбома)).jpg" class="w-100" style="min-height:123.31px" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <a style="color:black" asp-controller="Albums" asp-action="Details" asp-route-id="@item.ID">@item.Название_альбома</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="row" style="margin-top:1rem">
+            <div class="col-12">
+                <p>Послушайте музыку</p>
+            </div>
+        </div>
+        @foreach (var item in Model.треки)
+        {
+            <div class="row d-flex align-items-center" id="@item.ID" style="margin-bottom:0.4rem">
+                <div class="col-1 d-flex align-items-center">
+                    <i class="bi bi-play-circle" onclick="getAudioData('@item.ID')"></i>
+                </div>
+                <div class="col-5">
+                    <p style="margin-bottom:4px">@item.Название_трека</p>
+                </div>
+                @if (User.IsInRole("admin")) 
+                {
+                    <div class="col-3 d-flex align-items-center">
+                        <button class="btn btn-outline-success" onclick="deletesong(this)" value="@item.ID">Удалить</button>
+                    </div>
+                }
+                @if (User.IsInRole("user")) 
+                {
+                    <div class="col-3 d-flex align-items-center">
+                        @if (Model.треки_В_Плейлисте.FirstOrDefault(t => t.ID_Трека == item.ID) == null)
+                        {
+                            <button class="btn btn-outline-primary w-75" style="font-size:14px" onclick="addsong(this)" value="@item.ID">Добавить к себе</button>
+                        }
+                        else 
+                        {
+                            <button class="btn btn-outline-primary w-75" style="font-size:14px" onclick="addsong(this)" value="@item.ID">Удалить музыку</button>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

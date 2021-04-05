@@ -1,0 +1,45 @@
+﻿@model List<MusicPortal.Models.BandsWithTracksViewModel>
+@for (int i = 0; i < Model.Count(); i += 3)
+{
+    <div class="row" style="margin-top:10px">
+        @for (int j = 0; j < 3; j++)
+        {
+            if (i + j < Model.Count())
+            {
+                <div class="col-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <img src="~/images/Glushka/(@Model[i + j].pic_num).jpg" style="min-height:128.8px" class="w-100" />
+                        </div>
+                        <div class="col-6">
+                            <h6 class="w-100" style="font-size:16px">
+                                <a asp-action="Details" asp-controller="Bands" asp-route-id="@Model[i+j].коллектив.ID">
+                                    @Model[i + j].коллектив.Название_коллектива
+                                </a>
+                            </h6>
+                            <p style="font-size:12px; margin-bottom:0">@Model[i + j].коллектив.тип_Коллектива.Тип_коллектива</p>
+                            @for (int t = 0; t < Model[i + j].треки.Count(); t++)
+                            {
+                                <a class="w-100" asp-action="Details" asp-controller="Bands" asp-route-id="@Model[i+j].коллектив.ID" style="font-size:12px; color:aqua">@Model[i + j].треки.ElementAt(t).Название_трека</a><br>
+                                if (t == 1)
+                                {
+                                    break;
+                                }
+                            }
+                            <a class="w-100" asp-action="Details" asp-controller="Bands" asp-route-id="@Model[i+j].коллектив.ID" style="font-size:11px; color:grey">
+                                @Model[i + j].альбомы.Count() альбомов
+                            </a><br>
+                            <a class="w-100" asp-action="Details" asp-controller="Bands" asp-route-id="@Model[i+j].коллектив.ID" style="font-size:11px; color:grey">
+                                @Model[i + j].треки.Count() треков
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                break;
+            }
+        }
+    </div>
+}

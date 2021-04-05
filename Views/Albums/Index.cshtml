@@ -1,0 +1,168 @@
+﻿@model List<MusicPortal.Models.AlbumsWithTreksViewModel>
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="row" style="margin-left:20px">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12" style="border-bottom:1px solid grey">
+                <a asp-action="Index" asp-controller="Home" style="font-size:11px; color: grey">Главная</a>
+                <a style="font-size:11px; color:grey">></a>
+                <a asp-action="Index" asp-controller="Albums" style="font-size: 11px; color: grey">Альбомы</a>
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-12">
+                <a onclick="searchByLetter(this)" id="All" style="color:white; background-color:blue; cursor:pointer;padding-left:4px; padding-right:4px; border-radius:2px;margin-right:2px">Все</a>
+                @for (char i = 'A'; i < 'Z'; i++)
+                {
+                    <a onclick="searchByLetter(this)" style="color:blue; cursor:pointer" id="@i">@i</a>
+                }
+                @for (char i = 'А'; i < 'Я'; i++)
+                {
+                    <a onclick="searchByLetter(this)" style="cursor:pointer;color:blue" id="@i">@i</a>
+                }
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-3">
+                <select onchange="searchByType(this)" id="typeSelect" class="form-control">
+                    <option value="null">Не выбранно</option>
+                    @foreach (var item in ViewBag.Types)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
+            <div class="col-3">
+                <select onclick="searchByGenre(this)" id="genreSelect" class="form-control">
+                    <option value="null">Не выбранно</option>
+                    @foreach (var item in ViewBag.Genres)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-12">
+                <h5>Альбомы</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12" id="Albums">
+                @for (int i = 0; i < Model.Count(); i += 3)
+                {
+                    <div class="row" style="margin-top:10px">
+                        @for (int j = 0; j < 3; j++)
+                        {
+                            if (i + j < Model.Count())
+                            {
+                                <div class="col-4">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <img src="~/images/Glushka/(@Model[i + j].pic_num).jpg" style="min-height:128.8px" class="w-100" />
+                                        </div>
+                                        <div class="col-6">
+                                            <h6 class="w-100" style="font-size:14px">
+                                                <a asp-action="Details" asp-controller="Albums" asp-route-id="@Model[i+j].альбом.ID">
+                                                    @Model[i + j].альбом.Название_альбома
+                                                </a>
+                                            </h6>
+                                            <p style="font-size:12px; margin-bottom:0">@Model[i + j].альбом.коллектив.Название_коллектива</p>
+                                            <p style="font-size:12px; margin-bottom:0">@Model[i + j].альбом.Дата_выпуска.ToShortDateString()</p>
+                                            @for (int t = 0; t < Model[i + j].треки.Count(); t++)
+                                            {
+                                                <a class="w-100" asp-action="Details" asp-controller="Albums" asp-route-id="@Model[i+j].альбом.ID" style="font-size:12px; color:blue">@Model[i + j].треки.ElementAt(t).Название_трека</a><br>
+                                                if (t == 0)
+                                                {
+                                                    break;
+                                                }
+                                            }
+                                            <a class="w-100" asp-action="Details" asp-controller="Albums" asp-route-id="@Model[i+j].альбом.ID" style="font-size:11px; color:grey">@Model[i + j].треки.Count() треков</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        let data = {
+            pattern: undefined,
+            genre: undefined,
+            type: undefined
+        };
+        function Search()
+        {
+            let request = new XMLHttpRequest();
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = request.responseText;
+                    let div = document.getElementById('Albums');
+                    while (div.firstChild) {
+                        div.removeChild(div.firstChild);
+                    }
+                    div.innerHTML = div.innerHTML + response;
+                }
+            }
+            let body = "";
+            if (data.pattern != undefined)
+            {
+                body += "pattern=" + data.pattern + "&";
+            }
+            if (data.genre != undefined)
+            {
+                body += "genre=" + data.genre + "&";
+            }
+            if (data.type != undefined)
+            {
+                body += "type=" + data.type;
+            }
+            request.open("POST", "/Albums/FilterAlbum");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+        function searchByLetter(element)
+        {
+            if (element.id == "All") {
+                data.pattern = undefined;
+            }
+            else {
+                data.pattern = element.id;
+            }
+            Search();
+        }
+        function searchByType(element)
+        {
+            if (element.id == "null") {
+                data.type = undefined;
+            }
+            else
+            {
+                data.type = element.value;
+            }
+            Search();
+        }
+        function searchByGenre(element) {
+            if (element.id == "null") {
+                data.genre = undefined;
+            }
+            else {
+                data.genre = element.value;
+            }
+            Search();
+        }
+    </script>
+}

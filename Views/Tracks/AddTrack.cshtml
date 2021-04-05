@@ -1,0 +1,118 @@
+﻿@model MusicPortal.Models.Треки
+@{
+    ViewData["Title"] = "Добавление трека";
+}
+<div class="row">
+    <div class="col-12" style="border-bottom:1px solid gray">
+        <a style="font-size:11px; color: gray" asp-action="Adding" asp-controller="Home">Добавление</a>
+        <a style="font-size:11px; color:gray">></a>
+        <a style="font-size:11px; color: gray" asp-action="Tracks" asp-controller="AddTrack">Трека</a>
+    </div>
+</div>
+<div class="row" style="margin-top:20px">
+    <div class="col-12">
+        <h6>Добавление нового трека</h6>
+    </div>
+</div>
+<div class="row" style="margin-top:10px">
+    <div class="col-12">
+        <p>Введите название трека и выберите аудио дорожку</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 d-flex justify-content-center">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label asp-for="Название_трека">Название трека</label>
+                <input style="border:none; border-bottom:1px solid black" type="text" asp-for="Название_трека" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="kollective">Коллектив</label>
+                <select id="kollective" onchange="IspolnitelWasChosen(this)" class="form-control">
+                    <option value="null">
+                        Не выбрано
+                    </option>
+                    @foreach (var item in ViewBag.исполнители)
+                    {
+                        <option value="@item">
+                            @item
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="form-group" id="Albums">
+            </div>
+            <div class="form-group">
+                <label for="data" class="btn btn-outline-primary">Аудио дорожка</label>
+                <input onchange="fileUpload(this)" class="d-none" id="data" type="file" name="data" />
+            </div>
+            <div class="d-flex w-100 justify-content-center" id="audiodata"></div>
+            <div class="form-group" style="margin-top:20px">
+                <button type="submit" class="btn btn-outline-success">Добавить трек</button>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        function IspolnitelWasChosen(element)
+        {
+            if (element.value == "null")
+            {
+                return;
+            }
+            let request = new XMLHttpRequest();
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = JSON.parse(request.responseText);
+                    let label = document.createElement('label');
+                    label.setAttribute('for', 'ID_альбома');
+                    label.innerText = 'Альбом';
+                    let select = document.createElement('select');
+                    select.id = 'ID_альбома';
+                    select.name = 'ID_альбома';
+                    select.classList.add('form-control');
+                    for (let i = 0; i < response.length; i++)
+                    {
+                        let option = document.createElement('option');
+                        option.value = response[i].id;
+                        option.innerHTML = response[i].название_альбома;
+                        select.appendChild(option);
+                    }
+                    let div = document.getElementById('Albums');
+                    while (div.firstChild)
+                    {
+                        div.removeChild(div.firstChild);
+                    }
+                    div.appendChild(label);
+                    div.appendChild(select);
+                }
+            }
+            let body = "band=" + element.value;
+            request.open("POST", "/Tracks/GetAlbums");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+        var data = [];
+        function fileUpload(element) {
+            var files = element.files;
+            var reader = new FileReader();
+            for (let i = 0; i != files.length; i++) {
+                reader.readAsDataURL(files[i]);
+                data.push(reader);
+            }
+            for (let i = 0, f; f = files[i]; i++) {
+                var fr = new FileReader();
+                fr.onload = (function (theFile) {
+                    return function (e) {
+                        let audio = '<audio controls src="' + e.target.result + '"></audio>'
+                        document.getElementById("audiodata").innerHTML = audio;
+                    };
+                })(f);
+                fr.readAsDataURL(f);
+            }
+        }
+    </script>
+}

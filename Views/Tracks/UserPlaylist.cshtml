@@ -1,0 +1,163 @@
+﻿@model MusicPortal.Models.TracksWithUserPlaylistViewModel
+@{
+    ViewData["Title"] = "Моя музыка";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12" style="border-bottom:1px solid grey; padding-bottom:10px">
+                <a asp-action="Index" asp-controller="Home" style="font-size:11px; color: grey">Главная</a>
+                <a style="font-size:11px; color:grey">></a>
+                <a asp-action="Tracks" asp-controller="UserPlaylist" style="font-size: 11px; color: grey">Моя музыка</a>
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-12">
+                <a onclick="searchByLetter(this)" id="All" style="color:white; background-color: blue; cursor:pointer;padding-left:4px; padding-right:4px; border-radius:2px;margin-right:2px">Все</a>
+                @for (char i = 'A'; i < 'Z'; i++)
+                {
+                    <a onclick="searchByLetter(this)" style="color:blue; cursor:pointer" id="@i">@i</a>
+                }
+                @for (char i = 'А'; i < 'Я'; i++)
+                {
+                    <a onclick="searchByLetter(this)" style="cursor:pointer;color:blue" id="@i">@i</a>
+                }
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-3">
+                <select onchange="searchByGenre(this)" id="genreSelect" class="form-control js-chosen">
+                    <option value="null">Жанр</option>
+                    @foreach (var item in ViewBag.Genres)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
+            <div class="col-3">
+                <select onchange="searchByBand(this)" id="bandSelect" class="form-control js-chosen">
+                    <option value="null">Коллектив</option>
+                    @foreach (var item in ViewBag.Bands) 
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-12">
+                <h5>Треки</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12" id="TracksPlace">
+                @foreach (var item in Model.треки)
+                {
+                    <div class="row d-flex align-items-center" id="@item.ID" style="margin-bottom:0.4rem">
+                        <div class="col-1 d-flex align-items-center">
+                            <i style="color:lawngreen" class="bi bi-play-circle" onclick="getAudioData('@item.ID')"></i>
+                        </div>
+                        <div class="col-3">
+                            <p style="margin-bottom:4px">@item.Название_трека</p>
+                        </div>
+                        @if (User.IsInRole("admin"))
+                        {
+                            <div class="col-5 d-flex align-items-center">
+                                <button class="btn btn-outline-success" onclick="deletesong(this)" value="@item.ID">Удалить из плейлиста</button>
+                            </div>
+                        }
+                        @if (User.IsInRole("user"))
+                        {
+                            <div class="col-3 d-flex align-items-center">
+                                @if (Model.Треки_В_Плейлисте.FirstOrDefault(t => t.ID_Трека == item.ID) == null)
+                                {
+                                    <button class="btn btn-outline-primary w-75" style="font-size:14px" onclick="addsong(this)" value="@item.ID">Добавить к себе</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-primary w-75" style="font-size:14px" onclick="addsong(this)" value="@item.ID">Удалить музыку</button>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('.js-chosen').chosen({
+                width: '100%',
+                no_results_text: 'Совпадений не найдено',
+                placeholder_text_single: 'Выберите город'
+            });
+        });
+        let data = {
+            pattern: "",
+            genre: "",
+            band: "",
+        };
+        function Search() {
+            let request = new XMLHttpRequest();
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = request.responseText;
+                    let div = document.getElementById('TracksPlace');
+                    while (div.firstChild) {
+                        div.removeChild(div.firstChild);
+                    }
+                    div.innerHTML = div.innerHTML + response;
+                }
+            }
+            let body = "";
+            if (data.pattern != undefined) {
+                body += "pattern=" + data.pattern + "&";
+            }
+            if (data.genre != undefined)
+            {
+                body += "genre=" + data.genre + "&";
+            }
+            if (data.band != undefined) {
+                body += "band=" + data.band + "&";
+            }
+            body += "is_all=false";
+            request.open("POST", "/Tracks/FilterTracks");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+        function searchByLetter(element) {
+            if (element.id == "All") {
+                data.pattern = undefined;
+            }
+            else {
+                data.pattern = element.id;
+            }
+            Search();
+        }
+        function searchByGenre(element)
+        {
+            if (element.value == "null")
+                data.genre = undefined;
+            else
+            {
+                data.genre = element.value;
+            }
+            Search();
+        }
+        function searchByBand(element)
+        {
+            if (element.value == "null") {
+                data.band = undefined;
+            }
+            else
+            {
+                data.band = element.value;
+            }
+            Search();
+        }
+    </script>
+}

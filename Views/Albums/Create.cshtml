@@ -1,0 +1,70 @@
+﻿@model MusicPortal.Models.Альбомы
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12" style="border-bottom:1px solid gray">
+                <a style="font-size:11px; color: gray" asp-action="Adding" asp-controller="Home">Добавление</a>
+                <a style="font-size:11px; color:gray">></a>
+                <a style="font-size:11px; color: gray" asp-action="Albums" asp-controller="Create">Альбома</a>
+            </div>
+        </div>
+        <div class="row" style="margin-top:20px">
+            <div class="col-12">
+                <h6>Добавление нового альбома</h6>
+            </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+            <div class="col-12">
+                <p>Введите название альбома и сопутствующую информацию</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Название_альбома" class="control-label">Название альбома</label>
+                        <input asp-for="Название_альбома" class="form-control" />
+                        <span asp-validation-for="Название_альбома" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ID_Жанра" class="control-label">Жанр альбома</label>
+                        <select asp-for="ID_Жанра" class="js-chosen" asp-items="ViewBag.ID_Жанра"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ID_Типа_альбома" class="control-label">Тип альбома</label>
+                        <select asp-for="ID_Типа_альбома" class="js-chosen" asp-items="ViewBag.ID_Типа_альбома"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ID_коллектива" class="control-label">Коллектив исполнитель</label>
+                        <select asp-for="ID_коллектива" class="js-chosen" asp-items="ViewBag.ID_коллектива"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Дата_выпуска" class="control-label"></label>
+                        <input type="date" asp-for="Дата_выпуска" class="form-control" />
+                        <span asp-validation-for="Дата_выпуска" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-outline-success" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $('.js-chosen').chosen({
+                width: '100%',
+                no_results_text: 'Совпадений не найдено',
+                placeholder_text_single: 'Выберите город'
+            });
+        });
+    </script>
+}

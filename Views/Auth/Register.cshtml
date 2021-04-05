@@ -1,0 +1,70 @@
+﻿@model MusicPortal.Models.Пользователь
+@{
+    ViewData["Title"] = "Регистрация";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <h3>Регистрация</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p>
+                    Мы рады приветствовать вас на нашем портале! Для регистрации введите свою электронную почту и придумайте пароль.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+                <form accesskey="true" asp-controller="Auth" asp-action="Register" method="post" enctype="multipart/form-data">
+                    <div class="validation" asp-validation-summary="ModelOnly"></div>
+                    <div class="form-group">
+                        <label asp-for="Никнейм">Введите электронную почту</label>
+                        <input asp-for="Никнейм" type="text" class="form-control" />
+                        <span asp-validation-for="Никнейм"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Пароль">Пароль</label>
+                        <input asp-for="Пароль" type="password" class="form-control" />
+                        <span asp-validation-for="Пароль"></span>
+                    </div>
+                    <div class="form-group d-flex justify-content-center" id="photoplace"></div>
+                    <div class="form-group d-flex justify-content-center">
+                        <label asp-for="аватарка" class="btn btn-primary" style="font-size:16px; cursor:pointer">Выберите аватарку</label>
+                        <input onchange="fileUpload(this)" asp-for="аватарка" type="file" class="d-none" />
+                    </div>
+                    <div class="form-group d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary" style="margin-top: 3rem; margin-bottom:3rem">Зарегестрироваться</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        var data = [];
+        function fileUpload(element) {
+            var files = element.files;
+            var reader = new FileReader();
+            for (let i = 0; i != files.length; i++) {
+                reader.readAsDataURL(files[i]);
+                data.push(reader);
+            }
+            for (let i = 0, f; f = files[i]; i++) {
+                var fr = new FileReader();
+                fr.onload = (function (theFile) {
+                    return function (e) {
+                        let img = document.createElement('div');
+                        img.setAttribute('style', 'background-image:url(' + e.target.result + ');float:left; width:200px;height:200px;background-position:center center;background-size:cover');
+                        document.getElementById("photoplace").appendChild(img);
+                    };
+                })(f);
+                fr.readAsDataURL(f);
+            }
+        }
+    </script>
+}

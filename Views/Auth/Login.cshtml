@@ -1,0 +1,33 @@
+﻿@model MusicPortal.Models.Пользователь
+@{
+    ViewData["Title"] = "Login";
+}
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <h4 style="text-align:center">Вход</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p style="text-align:center">Введите электронную почту и пароль</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 d-flex justify-content-center">
+                <form method="post" class="form-group">
+                    <label for="Никнейм" class="col-form-label">Электронная почта:</label>
+                    <input id="Никнейм" class="form-control" type="text" name="Никнейм" placeholder="эл-почта" />
+                    <label for="Никнейм" class="col-form-label">Пароль:</label>
+                    <input style="margin-top:0.5rem" class="form-control" type="password" name="Пароль" placeholder="Пароль" />
+                    <div class="row" style="margin-top: 0.6rem">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-block w-100">Войти</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

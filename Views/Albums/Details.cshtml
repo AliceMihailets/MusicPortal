@@ -1,0 +1,246 @@
+﻿@model MusicPortal.Models.AlbumsWithTreksViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<div class="row" style="margin-left:20px">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <img src="~/images/Glushka/(@Model.pic_num).jpg" class="w-100" />
+            </div>
+        </div>
+        <div class="row" style="margin-top:20px;border-bottom:1px solid grey">
+            <div class="col-10">
+                <h4>@Model.альбом.Название_альбома</h4>
+            </div>
+            <div class="col-2 d-flex justify-content-around">
+                @if (User.IsInRole("admin"))
+                {
+                    <button onclick="changeAlbumName(this)" type="button" class="btn btn-primary" style="margin-bottom:0.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="deleteAlbum(this)" value="@Model.альбом.ID" type="button" class="btn btn-danger" style="margin-bottom:0.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="saveChanges(this)" type="button" class="btn btn-success d-none" id="saveBtn" value="@Model.альбом.ID" style="z-index:100;position:fixed; bottom:1rem;right:1rem">
+                        Применить
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="row" style="margin-top:1rem">
+            <div class="col-11">
+                <h5 style="margin-bottom:0">Краткое сведение об альбоме @Model.альбом.Название_альбома</h5>
+            </div>
+            <div class="col-1">
+                @if (User.IsInRole("admin"))
+                {
+                    <button onclick="changeAlbumInfo(this)" type="button" class="btn btn-primary" style="margin-bottom:0.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path>
+                        </svg>
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="row" style="border-bottom:1px solid grey">
+            <div class="col-3">
+                <p>Жанр:</p>
+                <p>Тип альбома:</p>
+                <p>Коллектив-исполнитель:</p>
+            </div>
+            <div class="col-6">
+                <p>@Model.альбом.жанр.Жанр</p>
+                <p>@Model.альбом.тип_альбома.Тип_альбома</p>
+                <p>@Model.альбом.коллектив.Название_коллектива</p>
+            </div>
+        </div>
+        <div class="row" style="margin-top:1rem">
+            <div class="col-12">
+                <p>На музыкальном портале Яндекс Музыка вы можете бесплатно слушать песни @Model.альбом.Название_альбома .</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h6>Треки альбома @Model.альбом.Название_альбома</h6>
+            </div>
+        </div>
+        @if (Model.треки.Count() == 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <p>Треков в альбоме нет.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model.треки)
+            {
+                <div class="row" id="@item.ID">
+                    <div class="col-1 d-flex align-items-center">
+                        <i style="color:green" class="bi bi-play-circle" onclick="getAudioData('@item.ID')"></i>
+                    </div>
+                    <div class="col-5">
+                        <p style="margin-bottom:4px">@item.Название_трека</p>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        let data = {
+            name: "",
+            genre: "",
+            type: "",
+            band: "",
+        };
+        function deleteAlbum(element)
+        {
+            let btn = element;
+            let request = new XMLHttpRequest();
+            let body = "id=" + element.value;
+            function reqReadyStateChanche()
+            {
+                if (request.readyState == 4 && request.status == 200)
+                {
+                    btn.onclick = null;
+                    alert("Исполнитель удалён");
+                }
+            }
+            request.open("POST", "/Albums/DeleteAlbum");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+        function changeAlbumName(element)
+        {
+            let div = element.parentNode.previousElementSibling;
+            let name = String(div.firstElementChild.innerText);
+            while (div.firstChild) {
+                div.removeChild(div.firstChild);
+            }
+            let formdiv = document.createElement('div');
+            formdiv.setAttribute('class', 'row');
+            let formcol1 = document.createElement('div');
+            formcol1.setAttribute('class', 'col-12');
+            let nameInp = document.createElement('input');
+            nameInp.setAttribute('type', 'text');
+            nameInp.classList.add('form-control');
+            nameInp.setAttribute('id', 'nameAlbum');
+            nameInp.value = name;
+            formcol1.appendChild(nameInp);
+            formdiv.appendChild(formcol1);
+            div.appendChild(formdiv);
+            document.getElementById("saveBtn").classList.toggle("d-none");
+        }
+        function changeAlbumInfo(element)
+        {
+            let div = element.parentNode.parentNode.nextElementSibling.lastElementChild;
+            let genre = div.firstElementChild.innerText;
+            let type = div.firstElementChild.nextElementSibling.innerText;
+            let band = div.firstElementChild.nextElementSibling.nextElementSibling.innerText;
+            div.removeChild(div.firstElementChild);
+            div.removeChild(div.firstElementChild);
+            div.removeChild(div.firstElementChild);
+            let genreInput = document.createElement('select');
+            let typeInput = document.createElement('select');
+            let bandInput = document.createElement('select');
+            genreInput.setAttribute('class', 'js-chosen form-group');
+            typeInput.setAttribute('class', 'js-chosen form-group');
+            bandInput.setAttribute('class', 'js-chosen form-group');
+            genreInput.setAttribute('id', 'genreInp');
+            typeInput.setAttribute('id', 'typeInp');
+            bandInput.setAttribute('id', 'bandInp');
+            let request = new XMLHttpRequest();
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = JSON.parse(request.responseText);
+                    for (let i = 0; i < response.genre.length; i++) {
+                        genreInput.options[i] = new Option(response.genre[i], response.genre[i]);
+                    }
+                    for (let i = 0; i < response.type.length; i++) {
+                        typeInput.options[i] = new Option(response.type[i], response.type[i]);
+                    }
+                    for (let i = 0; i < response.band.length; i++) {
+                        bandInput.options[i] = new Option(response.band[i], response.band[i]);
+                    }
+                    let p1 = document.createElement('p');
+                    let p2 = document.createElement('p');
+                    let p3 = document.createElement('p');
+                    p1.style.marginBottom = 10 + "px";
+                    p2.style.marginBottom = 12 + "px";
+                    p3.style.marginBottom = 12 + "px";
+                    p1.appendChild(genreInput);
+                    p2.appendChild(typeInput);
+                    p3.appendChild(bandInput);
+                    div.appendChild(p3);
+                    div.insertBefore(p2, p3);
+                    div.insertBefore(p1, div.firstElementChild);
+                    $('.js-chosen').chosen({
+                        width: '100%',
+                        no_results_text: 'Совпадений не найдено',
+                        placeholder_text_single: 'Выберите город'
+                    });
+                    document.getElementById('saveBtn').classList.toggle('d-none');
+                }
+            }
+            request.open("POST", "/Albums/GetGenresAndTypes");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send();
+        }
+        function saveChanges(element) {
+            let request = new XMLHttpRequest();
+            if (document.getElementById('nameAlbum'))
+                data.name = document.getElementById('nameAlbum').value;
+            if (document.getElementById('genreInp'))
+                data.genre = document.getElementById('genreInp').value;
+            if (document.getElementById('typeInp'))
+                data.type = document.getElementById('typeInp').value;
+            if (document.getElementById('bandInp'))
+                data.band = document.getElementById('bandInp').value;
+            let body = "id=" + element.value + "&name=" + data.name + "&genre=" + data.genre + "&type=" + data.type + "&band=" + data.band;
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = JSON.parse(request.responseText);
+                    if (document.getElementById('nameAlbum')) {
+                        let div11 = document.getElementById('nameAlbum').parentElement.parentElement.parentElement;
+                        while (div11.firstChild) {
+                            div11.removeChild(div11.firstChild);
+                        }
+                        let h4 = document.createElement("h4");
+                        h4.innerText = response.name;
+                        div11.appendChild(h4);
+                    }
+                    if (document.getElementById('bandInp')) {
+                        let genreInp = document.getElementById('genreInp');
+                        let typeInp = document.getElementById('typeInp');
+                        let bandInp = document.getElementById('bandInp');
+                        genreInp.parentNode.style.marginBottom = 16 + "px";
+                        typeInp.parentNode.style.marginBottom = 16 + "px";
+                        bandInp.parentNode.style.marginBottom = 16 + "px";
+                        genreInp.parentNode.innerHTML = response.genre;
+                        typeInp.parentNode.innerHTML = response.type;
+                        bandInp.parentNode.innerHTML = response.band;
+                    }
+                    document.getElementById('saveBtn').classList.toggle('d-none');
+                }
+            }
+            request.open("POST", "/Albums/EditFields");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+    </script>
+}

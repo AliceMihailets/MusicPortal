@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MusicPortal</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/js/bootstrap-icons/font/bootstrap-icons.css" />
+    <link rel="stylesheet" href="~/js/chosen/chosen.min.css" />
+    <link rel="stylesheet" href="~/js/jqueryui/jquery-ui.min.css" />
+</head>
+<body>
+    <header style="position:sticky; top:0; z-index:10000">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3" >
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><b style="color:red">А</b><b>лиса</b> Музыка</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-2 align-items-center">
+                        @if (User.Identity.Name != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Logout">Выйти</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Войти</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Register">Зарегестрироваться</a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav flex-grow-1">
+                        <li style="min-width:300px" class="nav-item">
+                            <form class="form-inline" style="padding-top:10px">
+                                <input type="search" class="form-control mr-sm-2" placeholder="Исполнитель, трек, альбом" />
+                                <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Поиск</button>
+                            </form>
+                        </li>
+                        <li style="min-width:300px" class="nav-item">
+                            <audio id="VsyaAudioVsehAudio" controls></audio>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container" style="width: 1200px; background-color:#ffffff">
+        <main role="main" class="pb-3">
+            <div class="row" style="width: inherit">
+                <div class="col-2">
+                    <ul class="nav nav-pills flex-column position-fixed link-hover-solid" style="font-size:16px">
+                        <li class="nav-item">
+                            <a style="color:black" class="navigation nav-link " asp-controller="Ispolniteli" asp-action="Index">
+                                Исполнители
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a style="color:black" class="navigation nav-link" asp-controller="Bands" asp-action="Index">
+                                Коллективы
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a style="color:black" class="navigation nav-link" asp-controller="Albums" asp-action="Index">
+                                Альбомы
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a style="color:black" class="navigation nav-link" asp-controller="Tracks" asp-action="Index">
+                                Треки
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            @if (User.IsInRole("admin"))
+                            {
+                                <a style="color:black" class="navigation nav-link" asp-controller="Home" asp-action="Adding">
+                                    Страница добавления
+                                </a>
+                            }
+                            @if (User.IsInRole("user"))
+                            {
+                                <a style="color:black" class="navigation nav-link" asp-controller="Tracks" asp-action="UserPlaylist">
+                                    Моя музыка
+                                </a>
+                            }
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-10">
+                    @RenderBody()
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - Alisa.com - <a asp-area="" asp-controller="Home" asp-action="Privacy">Приватность</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/jqueryui/jquery-ui.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/chosen/chosen.jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

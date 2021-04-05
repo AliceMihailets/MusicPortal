@@ -1,0 +1,330 @@
+﻿@model MusicPortal.Models.BandsWithTracksViewModel
+@using System.Security.Cryptography;
+@using System.Text;
+@{
+    ViewData["Title"] = Model.коллектив.Название_коллектива;
+    Int32 GetHash(string str)
+    {
+        var tmpsrc = ASCIIEncoding.ASCII.GetBytes(str);
+        var tmphash = new MD5CryptoServiceProvider().ComputeHash(tmpsrc);
+        Int32 int_hash = BitConverter.ToInt32(tmphash) % 10;
+        return Math.Abs(int_hash) + 1;
+    }
+}
+<div class="row" style="margin-left: 20px">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <img src="~/images/Glushka/(@Model.pic_num).jpg" class="w-100" />
+            </div>
+        </div>
+        <div class="row" style="margin-top:20px;border-bottom:1px solid grey">
+            <div class="col-10">
+                <h4>@Model.коллектив.Название_коллектива</h4>
+            </div>
+            <div class="col-2 d-flex justify-content-around">
+                @if (User.IsInRole("admin"))
+                {
+                    <button onclick="changeBandName(this)" type="button" class="btn btn-primary" style="margin-bottom:0.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                            <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="deleteBand(this)" value="@Model.коллектив.ID" type="button" class="btn btn-danger" style="margin-bottom:0.2rem">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"></path>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"></path>
+                        </svg>
+                    </button>
+                    <button onclick="saveChanges(this)" type="button" class="btn btn-success d-none" id="saveBtn" value="@Model.коллектив.ID" style="z-index:100;position:fixed; bottom:1rem;right:1rem">
+                        Применить
+                    </button>
+                }
+            </div>
+        </div>
+        <div class="row" style="margin-top:1rem">
+            <div class="col-11">
+                <h5>Краткое сведение о коллективе @Model.коллектив.Название_коллектива</h5>
+            </div>
+            <div class="col-1">
+                <button onclick="changeBandInfo(this)" type="button" class="btn btn-primary" style="margin-bottom:0.2rem">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="row" style="border-bottom:1px solid grey;margin-top:10px;">
+            <div class="col-3">
+                <p>Тип коллектива:</p>
+                <p>Дата образования:</p>
+                <p>Дата распада:</p>
+            </div>
+            <div class="col-6">
+                <p>@Model.коллектив.тип_Коллектива.Тип_коллектива</p>
+                <p>@Model.коллектив.Дата_образования</p>
+                @if (Model.коллектив.Дата_расспада != null)
+                {
+                    <p>@Model.коллектив.Дата_расспада</p>
+                }
+                else 
+                {
+                    <p>Пока ещё не расспились</p>
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p>На музыкальном портале Яндекс Музыка вы можете бесплатно слушать песни @Model.коллектив.Название_коллектива .</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <h6>Исполнители коллектива @Model.коллектив.Название_коллектива</h6>
+            </div>
+        </div>
+        @if (Model.исполнители.Count() == 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <p>Исполнителей нет.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @for (int i = 0; i < Model.исполнители.Count(); i++)
+                {
+                    <div class="col-2 d-flex flex-column align-items-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <img style="min-height:128.32px" src="~/images/Glushka/(@GetHash(Model.исполнители[i].Фамилия)).jpg" class="w-100" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <p>
+                                    <a asp-action="Details" asp-controller="Ispolniteli" asp-route-id="@Model.исполнители[i].ID_исполнителя">
+                                        @Model.исполнители[i].Фамилия @Model.исполнители[i].Имя
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    if (i == 6)
+                    {
+                        break;
+                    }
+                }
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <h6>Альбомы коллектива @Model.коллектив.Название_коллектива</h6>
+            </div>
+        </div>
+        @if (Model.альбомы.Count() == 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <p>Альбомов нет.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @for (int i = 0; i < Model.альбомы.Count(); i++)
+                {
+                    <div class="col-2 d-flex flex-column align-items-center">
+                        <div class="row">
+                            <div class="col-12">
+                                <img style="min-height:128.32px" src="~/images/Glushka/(@GetHash(Model.альбомы[i].Название_альбома)).jpg" class="w-100" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <p>
+                                    <a asp-controller="Albums" asp-action="Details" asp-route-id="@Model.альбомы[i].ID">
+                                        @Model.альбомы[i].Название_альбома
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    if (i == 6)
+                    {
+                        break;
+                    }
+                }
+            </div>
+        }
+        <div class="row">
+            <div class="col-12">
+                <h6>Треки коллектива @Model.коллектив.Название_коллектива</h6>
+            </div>
+        </div>
+        @if (Model.треки.Count() == 0)
+        {
+            <div class="row">
+                <div class="col-12">
+                    <p>Треков у коллектива нет.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model.треки)
+            {
+                <div class="row" id="@item.ID">
+                    <div class="col-1 d-flex align-items-center">
+                        <i style="color:green" class="bi bi-play-circle" onclick="getAudioData('@item.ID')"></i>
+                    </div>
+                    <div class="col-5">
+                        <p style="margin-bottom:4px">@item.Название_трека</p>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+@section Scripts
+{
+    <script>
+        let data = {
+            name: "",
+            type: "",
+            startdate: "",
+            closedate: "",
+        };
+        function deleteBand(element)
+        {
+            let btn = element;
+            let request = new XMLHttpRequest();
+            let body = "id=" + element.value;
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    btn.onclick = null;
+                    alert("Исполнитель удалён");
+                }
+            }
+            request.open("POST", "/Bands/DeleteBand");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+        function changeBandName(element) {
+            let div = element.parentNode.previousElementSibling;
+            let name = String(div.firstElementChild.innerText);
+            while (div.firstChild) {
+                div.removeChild(div.firstChild);
+            }
+            let formdiv = document.createElement('div');
+            formdiv.setAttribute('class', 'row');
+            let formcol1 = document.createElement('div');
+            formcol1.setAttribute('class', 'col-12');
+            let nameInp = document.createElement('input');
+            nameInp.setAttribute('type', 'text');
+            nameInp.classList.add('form-control');
+            nameInp.setAttribute('id', 'nameBand');
+            nameInp.value = name;
+            formcol1.appendChild(nameInp);
+            formdiv.appendChild(formcol1);
+            div.appendChild(formdiv);
+            document.getElementById("saveBtn").classList.toggle("d-none");
+        }
+        function changeBandInfo(element) {
+            let div = element.parentNode.parentNode.nextElementSibling.lastElementChild;
+            div.removeChild(div.firstElementChild);
+            div.removeChild(div.firstElementChild);
+            div.removeChild(div.firstElementChild);
+            let typeInput = document.createElement('select');
+            let startInput = document.createElement('input');
+            let closeInput = document.createElement('input');
+            typeInput.setAttribute('class', 'js-chosen form-group');
+            startInput.setAttribute('class', 'form-group');
+            closeInput.setAttribute('class', 'form-group');
+            startInput.setAttribute('type', 'date');
+            closeInput.setAttribute('type', 'date');
+            typeInput.setAttribute('id', 'typeInp');
+            startInput.setAttribute('id', 'startInp');
+            closeInput.setAttribute('id', 'closeInp');
+            startInput.style.marginBottom = 0;
+            closeInput.style.marginBottom = 0;
+            let request = new XMLHttpRequest();
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = JSON.parse(request.responseText);
+                    for (let i = 0; i < response.type.length; i++) {
+                        typeInput.options[i] = new Option(response.type[i], response.type[i]);
+                    }
+                    let p1 = document.createElement('p');
+                    let p2 = document.createElement('p');
+                    let p3 = document.createElement('p');
+                    p1.style.marginBottom = 10 + "px";
+                    p2.style.marginBottom = 12 + "px";
+                    p3.style.marginBottom = 12 + "px";
+                    p1.appendChild(typeInput);
+                    p2.appendChild(startInput);
+                    p3.appendChild(closeInput);
+                    div.appendChild(p3);
+                    div.insertBefore(p2, p3);
+                    div.insertBefore(p1, div.firstElementChild);
+                    $('.js-chosen').chosen({
+                        width: '100%',
+                        no_results_text: 'Совпадений не найдено',
+                        placeholder_text_single: 'Выберите город'
+                    });
+                    document.getElementById('saveBtn').classList.toggle('d-none');
+                }
+            }
+            request.open("POST", "/Bands/GetTypes");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send();
+        }
+        function saveChanges(element) {
+            let request = new XMLHttpRequest();
+            if (document.getElementById('nameBand'))
+                data.name = document.getElementById('nameBand').value;
+            if (document.getElementById('typeInp'))
+                data.type = document.getElementById('typeInp').value;
+            if (document.getElementById('startInp'))
+                data.start = document.getElementById('startInp').value;
+            if (document.getElementById('closeInp'))
+                data.close = document.getElementById('closeInp').value;
+            let body = "id=" + element.value + "&name=" + data.name + "&type=" + data.type + "&start=" + data.start + "&close=" + data.close;
+            function reqReadyStateChanche() {
+                if (request.readyState == 4 && request.status == 200) {
+                    let response = JSON.parse(request.responseText);
+                    if (document.getElementById('nameBand')) {
+                        let div11 = document.getElementById('nameBand').parentElement.parentElement.parentElement;
+                        while (div11.firstChild) {
+                            div11.removeChild(div11.firstChild);
+                        }
+                        let h4 = document.createElement("h4");
+                        h4.innerText = response.name;
+                        div11.appendChild(h4);
+                    }
+                    if (document.getElementById('typeInp')) {
+                        let typeInp = document.getElementById('typeInp');
+                        let startInp = document.getElementById('startInp');
+                        let closeInp = document.getElementById('closeInp');
+                        typeInp.parentNode.style.marginBottom = 16 + "px";
+                        startInp.parentNode.style.marginBottom = 16 + "px";
+                        closeInp.parentNode.style.marginBottom = 16 + "px";
+                        typeInp.parentNode.innerHTML = response.type;
+                        startInp.parentNode.innerHTML = response.start;
+                        closeInp.parentNode.innerHTML = response.close;
+                    }
+                    document.getElementById('saveBtn').classList.toggle('d-none');
+                }
+            }
+            request.open("POST", "/Bands/EditFields");
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = reqReadyStateChanche;
+            request.send(body);
+        }
+    </script>
+}
